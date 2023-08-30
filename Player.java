@@ -120,6 +120,15 @@ public class Player {
         }
     }
 
+    //getters
+    public ArrayList<Stone> getStones() {
+        return this.stones;
+    }
+
+    public String getColor() {
+        return this.color;
+    }
+
     //toString
     public String toString() {
         return "Player: " + this.color + "\n" + "Pieces: " + this.numPieces + "\n";
