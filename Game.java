@@ -45,6 +45,10 @@ public class Game {
             }
             else {
                 System.out.println("Blacks turn");
+
+                //can jump?
+                System.out.println(canJump(playerBlack));
+
                 System.out.println("Input the tile of the piece you would like to move");
                 String tileName = input.nextLine();
                 System.out.println("Input the direction you would like to move in (left or right)");
@@ -107,8 +111,7 @@ public class Game {
                     if (diagonalLeftTile.getState() == 'B') {
 
                         // then now you gotta check if there is an empty tile in that direction
-                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() - 1,
-                                diagonalLeftTile.getCol() - 1);
+                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() - 1, diagonalLeftTile.getCol() - 1);
 
                         if (nextTile.getState() == '-') {
 
@@ -120,8 +123,7 @@ public class Game {
                     if (diagonalRightTile.getState() == 'B') {
 
                         // then now you gotta check if there is an empty tile in that direction
-                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() - 1,
-                                diagonalRightTile.getCol() + 1);
+                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() - 1, diagonalRightTile.getCol() + 1);
 
                         if (nextTile.getState() == '-') {
 
@@ -137,8 +139,7 @@ public class Game {
                     if (diagonalRightTile.getState() == 'B') {
 
                         // then now you gotta check if there is an empty tile in that direction
-                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() - 1,
-                                diagonalRightTile.getCol() + 1);
+                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() - 1, diagonalRightTile.getCol() + 1);
 
                         if (nextTile.getState() == '-') {
 
@@ -154,8 +155,7 @@ public class Game {
                     if (diagonalLeftTile.getState() == 'B') {
 
                         // then now you gotta check if there is an empty tile in that direction
-                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() - 1,
-                                diagonalLeftTile.getCol() - 1);
+                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() - 1, diagonalLeftTile.getCol() - 1);
 
                         if (nextTile.getState() == '-') {
 
@@ -168,15 +168,70 @@ public class Game {
 
             if (player.getColor().equals("black")) {
 
-                // get the tiles we need to look at
-                Tile diagonalLeftTile = this.board.getTile(currentTileRow + 1, currentTileCol - 1);
-                Tile diagonalRightTile = this.board.getTile(currentTileRow + 1, currentTileCol + 1);
+                //do the diagonal checks for black, remember we are starting from the top and going down the board
+                if (currentTileCol != 0 && currentTileCol != 1 && currentTileCol != 6 && currentTileCol != 7) {
+                    // this means we must check both diagonal tiles, no out of bounds exceptions
+                    Tile diagonalLeftTile = this.board.getTile(currentTileRow + 1, currentTileCol - 1);
+                    Tile diagonalRightTile = this.board.getTile(currentTileRow + 1, currentTileCol + 1);
+
+                    // now check tile states for left
+                    if (diagonalLeftTile.getState() == 'W') {
+
+                        // then now you gotta check if there is an empty tile in that direction
+                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() + 1, diagonalLeftTile.getCol() - 1);
+
+                        if (nextTile.getState() == '-') {
+
+                            // if this is true then jumping is possible
+                            validJumpTiles.add(nextTile);
+                        }
+                    }
+                    // check tiles states for right
+                    if (diagonalRightTile.getState() == 'W') {
+
+                        // then now you gotta check if there is an empty tile in that direction
+                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() + 1, diagonalRightTile.getCol() + 1);
+
+                        if (nextTile.getState() == '-') {
+
+                            // if this is true then jumping is possible
+                            validJumpTiles.add(nextTile);
+                        }
+                    }
+                } else if (currentTileCol == 0 || currentTileCol == 1) {
+                    // only check the right tiles
+                    Tile diagonalRightTile = this.board.getTile(currentTileRow + 1, currentTileCol + 1);
+
+                    // check tiles states for right
+                    if (diagonalRightTile.getState() == 'W') {
+
+                        // then now you gotta check if there is an empty tile in that direction
+                        Tile nextTile = this.board.getTile(diagonalRightTile.getRow() + 1, diagonalRightTile.getCol() + 1);
+
+                        if (nextTile.getState() == '-') {
+
+                            // if this is true then jumping is possible
+                            validJumpTiles.add(nextTile);
+                        }
+                    }
+                } else if (currentTileCol == 6 || currentTileCol == 7) {
+                    // only check left tiles
+                    Tile diagonalLeftTile = this.board.getTile(currentTileRow + 1, currentTileCol - 1);
+
+                    // now check tile states for left
+                    if (diagonalLeftTile.getState() == 'W') {
+
+                        // then now you gotta check if there is an empty tile in that direction
+                        Tile nextTile = this.board.getTile(diagonalLeftTile.getRow() + 1, diagonalLeftTile.getCol() - 1);
+
+                        if (nextTile.getState() == '-') {
+
+                            // if this is true then jumping is possible
+                            validJumpTiles.add(nextTile);
+                        }
+                    }
+                }
             }
-
-            // check the tiles diagonal (in the direction the piece moves), but also
-            // remember that if its a side tile we can't check one of the tiles so be
-            // careful for errors
-
         }
 
         // figure out if we have the ability to jump
@@ -191,7 +246,7 @@ public class Game {
             }
 
             // now do the return message
-            return "Player can jump. Player can jump to these tiles: " + tiles;
+            return "Player can jump. Player can jump to the tile(s): " + tiles;
 
         } else {
             // no jumping is available
